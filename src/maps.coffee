@@ -4,6 +4,22 @@
 # Commands:
 #   hubot map me <query> - Returns a map view of the area returned by `query`.
 
+getMapUrl = (mapType, location) ->
+  mapUrl   = "http://maps.google.com/maps/api/staticmap?markers=" +
+              location +
+              "&size=400x400&maptype=" +
+              mapType +
+              "&sensor=false" +
+              "&format=png" # So campfire knows it's an image
+  url      = "http://maps.google.com/maps?q=" +
+             location +
+            "&hl=en&sll=37.0625,-95.677068&sspn=73.579623,100.371094&vpsrc=0&hnear=" +
+            location +
+            "&t=m&z=11"
+
+  mapUrl: mapUrl
+  url: url
+
 module.exports = (robot) ->
 
   robot.respond /((driving|walking|bike|biking|bicycling) )?directions from (.+) to (.+)/i, (msg) ->
@@ -53,21 +69,21 @@ module.exports = (robot) ->
       msg.send response
     )
 
-  robot.respond /(?:(satellite|terrain|hybrid)[- ])?map( me)? (.+)/i, (msg) ->
-    mapType  = msg.match[1] or "roadmap"
-    location = encodeURIComponent(msg.match[3])
-    mapUrl   = "http://maps.google.com/maps/api/staticmap?markers=" +
-                location +
-                "&size=400x400&maptype=" +
-                mapType +
-                "&sensor=false" +
-                "&format=png" # So campfire knows it's an image
-    url      = "http://maps.google.com/maps?q=" +
-               location +
-              "&hl=en&sll=37.0625,-95.677068&sspn=73.579623,100.371094&vpsrc=0&hnear=" +
-              location +
-              "&t=m&z=11"
+  # robot.respond /(.+)/i, (msg) ->
+  #   info = getMapUrl "roadmap", encodeURIComponent(msg.match[1])
+  #   msg.send "[![Foo](#{info.mapUrl})](#{info.url})"
 
-    msg.send mapUrl
-    msg.send url
+  robot.hear /(.+?)(위성)? ?(지도|주소|가는 ?길)/i, (msg) ->
+    mapType = "roadmap"
+    if msg.match[2]
+      mapType = "satellite"
 
+    if msg.match[1] == '위성'
+      return
+
+    info = getMapUrl mapType, encodeURIComponent(msg.match[1])
+    msg.send "[![image](#{info.mapUrl})](#{info.url})"
+
+  robot.hear /(?:(satellite|terrain|hybrid)[- ])?map( me)? (.+)/i, (msg) ->
+    info = getMapUrl msg.match[1] or "roadmap", encodeURIComponent(msg.match[3])
+    msg.send "[![image](#{info.mapUrl})](#{info.url})"
