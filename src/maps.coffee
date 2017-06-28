@@ -73,7 +73,7 @@ module.exports = (robot) ->
   #   info = getMapUrl "roadmap", encodeURIComponent(msg.match[1])
   #   msg.send "[![Foo](#{info.mapUrl})](#{info.url})"
 
-  robot.hear /(.+?)(위성)? ?(지도|주소|가는 ?길)/i, (msg) ->
+  robot.hear /(.+?)(위성)? ?(지도|가는 ?길)/i, (msg) ->
     mapType = "roadmap"
     if msg.match[2]
       mapType = "satellite"

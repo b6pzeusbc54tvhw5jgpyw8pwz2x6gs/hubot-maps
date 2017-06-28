@@ -1,7 +1,7 @@
 {
   "name": "hubot-maps-uc",
   "description": "A Hubot script for searching maps and directions based on https://github.com/gkoo/hubot-maps",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Alfred UC",
   "license": "MIT",
   "keywords": [
